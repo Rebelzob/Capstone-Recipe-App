@@ -1,10 +1,13 @@
 Rails.application.routes.draw do
+  devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   resources :users
   resources :foods
   resources :recipes do
-    resources :food_recipes
+    resources :recipe_foods
   end
+
+  resources :shopping_lists
 
   root to: "foods#index"
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
