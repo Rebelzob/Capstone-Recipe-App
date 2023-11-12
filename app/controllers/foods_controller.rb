@@ -8,6 +8,7 @@ class FoodsController < ApplicationController
 
   # GET /foods/1 or /foods/1.json
   def show
+    @food = Food.find(params[:id])
   end
 
   # GET /foods/new
@@ -15,21 +16,20 @@ class FoodsController < ApplicationController
     @food = Food.new
   end
 
-  # GET /foods/1/edit
-  def edit
-  end
-
   # POST /foods or /foods.json
   def create
     @food = Food.new(food_params)
+    @food.user = current_user
 
     respond_to do |format|
       if @food.save
         format.html { redirect_to food_url(@food), notice: "Food was successfully created." }
         format.json { render :show, status: :created, location: @food }
+        redirect_to foods_path
       else
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @food.errors, status: :unprocessable_entity }
+        redirect_to new_food_path
       end
     end
   end
@@ -49,10 +49,11 @@ class FoodsController < ApplicationController
 
   # DELETE /foods/1 or /foods/1.json
   def destroy
+    @food = Food.find(params[:id])
     @food.destroy!
 
     respond_to do |format|
-      format.html { redirect_to foods_url, notice: "Food was successfully destroyed." }
+      format.html { redirect_to foods_url, notice: "Food was successfully deleted." }
       format.json { head :no_content }
     end
   end
@@ -65,6 +66,6 @@ class FoodsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def food_params
-      params.fetch(:food, {})
+      params.require(:food).permit(:name, :measurement_unit, :price)
     end
 end
